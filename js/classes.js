@@ -1,7 +1,7 @@
 const MARGIN_FROM_CANVAS_BOTTOM_TO_GROUND = 96;
-
+const DISTANCE_TO_GROUND = 330;
 class Sprite {
-  constructor({ position, imageSrc, scale = 1, frameCount = 1, offset = {x:0,y:0}}) {
+  constructor({ position, imageSrc, scale = 1, frameCount = 1, offset = { x: 0, y: 0 } }) {
     this.position = position;
     // this.height = 50;
     // this.width = 150;
@@ -31,16 +31,17 @@ class Sprite {
     );
   }
 
-animateFrames() {
-  this.framesElapsed++;
-  if (this.framesElapsed % this.framesHold === 0) { // hold animation, to be not on every frame
-    if (this.frameCurrent < this.frameCount - 1) {
-      this.frameCurrent++;
-    } else {
-      this.frameCurrent = 0;
+  animateFrames() {
+    this.framesElapsed++;
+    if (this.framesElapsed % this.framesHold === 0) {
+      // hold animation, to be not on every frame
+      if (this.frameCurrent < this.frameCount - 1) {
+        this.frameCurrent++;
+      } else {
+        this.frameCurrent = 0;
+      }
     }
   }
-}
 
   update() {
     this.draw();
@@ -49,9 +50,23 @@ animateFrames() {
 }
 
 class Fighter extends Sprite {
-  constructor({ position, velocity, color = 'red', attackOffset, imageSrc, scale = 1, frameCount = 1, offset = {x:0,y:0} }) {
+  constructor({
+    position,
+    velocity,
+    color = 'red',
+    attackBox: { attackOffset, attackBoxWidth, attackBoxHeight },
+    imageSrc,
+    scale = 1,
+    frameCount = 1,
+    offset = { x: 0, y: 0 },
+    sprites,
+  }) {
     super({
-      position, imageSrc, scale, frameCount, offset
+      position,
+      imageSrc,
+      scale,
+      frameCount,
+      offset,
     });
     this.velocity = velocity;
     this.color = color;
@@ -64,23 +79,35 @@ class Fighter extends Sprite {
         y: this.position.y,
       },
       attackOffset,
-      width: ATTACKBOX_WIDTH,
-      height: ATTACKBOX_HEIGHT,
+      width: attackBoxWidth,
+      height: attackBoxHeight,
     };
     this.isAttacking = false;
     this.health = 100;
+    this.dead = false;
 
     this.frameCurrent = 0;
     this.framesElapsed = 0; // showed frames
     this.framesHold = 5; // for every X frames change sprite position
+
+    this.sprites = sprites;
+    for (const sprite in sprites) {
+      // loop through all our prites to create instances of javascript Image + set source for them
+      sprites[sprite].image = new Image();
+      sprites[sprite].image.src = sprites[sprite].imageSrc;
+    }
   }
 
   update() {
     this.draw();
-    this.animateFrames();
-    
+    if (!this.dead) {
+      this.animateFrames();
+    }
+
     this.attackBox.position.x = this.position.x + this.attackBox.attackOffset.x;
-    this.attackBox.position.y = this.position.y;
+    this.attackBox.position.y = this.position.y + this.attackBox.attackOffset.y;
+
+    // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height); // show attack hitboxes
 
     this.position.y += this.velocity.y; // apply the acceleration
     this.position.x += this.velocity.x;
@@ -88,6 +115,7 @@ class Fighter extends Sprite {
     if (this.position.y + this.height + this.velocity.y >= canvas.height - MARGIN_FROM_CANVAS_BOTTOM_TO_GROUND) {
       // stop on the bottom of screen
       this.velocity.y = 0;
+      this.position.y = DISTANCE_TO_GROUND; // to avoid gravity + acceleration bug
     } else {
       this.velocity.y += GRAVITY; // apply gravity if not at the bottom of screen
     }
@@ -96,8 +124,74 @@ class Fighter extends Sprite {
   attack() {
     if (this.isAttacking === true) return;
     this.isAttacking = true;
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 100);
+    this.switchSprite('attack1');
+  }
+
+  switchSprite(sprite) {
+    // overriding all other animations with the attack anim
+    if (this.image === this.sprites.attack1.image && this.frameCurrent < this.sprites.attack1.frameCount - 1) return; // to disable sprite change while attacking
+    // overriding all other animations with the take hit anim
+    if (this.image === this.sprites.takeHit.image && this.frameCurrent < this.sprites.takeHit.frameCount - 1) return;
+
+    // overriding all other animations with the death anim
+    if (this.image === this.sprites.death.image) {
+      if (this.frameCurrent === this.sprites.death.frameCount - 1) {
+        this.dead = true;
+      }
+      return;
+    }
+
+    // this.frameCurrent = 0; // to avoid flashing, when trying to get from 8 frame anim to 2 frame anim
+    // for example going from 4th frame to 2 frame anim causes flashing, cause there is no 5th sprite
+    switch (sprite) {
+      case 'idle':
+        if (this.image !== this.sprites.idle.image) {
+          this.image = this.sprites.idle.image;
+          this.frameCount = this.sprites.idle.frameCount;
+          this.frameCurrent = 0;
+        }
+        break;
+      case 'run':
+        if (this.image !== this.sprites.run.image) {
+          this.image = this.sprites.run.image;
+          this.frameCount = this.sprites.run.frameCount;
+          this.frameCurrent = 0;
+        }
+        break;
+      case 'jump':
+        if (this.image !== this.sprites.jump.image) this.image = this.sprites.jump.image;
+        this.frameCount = this.sprites.jump.frameCount;
+        this.frameCurrent = 0;
+        break;
+
+      case 'fall':
+        if (this.image !== this.sprites.fall.image) this.image = this.sprites.fall.image;
+        this.frameCount = this.sprites.fall.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'attack1':
+        if (this.image !== this.sprites.attack1.image) this.image = this.sprites.attack1.image;
+        this.frameCount = this.sprites.attack1.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'takeHit':
+        if (this.image !== this.sprites.takeHit.image) this.image = this.sprites.takeHit.image;
+        this.frameCount = this.sprites.takeHit.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'death':
+        if (this.image !== this.sprites.death.image) this.image = this.sprites.death.image;
+        this.frameCount = this.sprites.death.frameCount;
+        this.frameCurrent = 0;
+        break;
+    }
+  }
+
+  takeHit(damage) {
+    this.health -= damage;
+
+    if (this.health <= 0) {
+      this.switchSprite('death');
+    } else this.switchSprite('takeHit');
   }
 }
