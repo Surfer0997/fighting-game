@@ -33,7 +33,7 @@ const background = new Sprite({
 
 const shop = new Sprite({
   position: {
-    x:650,
+    x:650, // bruteforce position of shop
     y:173
   },
   imageSrc: './img/shop.png',
@@ -53,10 +53,17 @@ const player = new Fighter({
     y: 0,
   },
   color: 'red',
-  offset: {
+  attackOffset: {
     x: 0,
     y: 0,
   },
+  imageSrc: './img/samuraiMack/Idle.png',
+  frameCount: 8,
+  scale: 2.5,
+  offset: {
+    x: 215,
+    y: 155
+  }
 });
 
 const enemy = new Fighter({
@@ -69,10 +76,17 @@ const enemy = new Fighter({
     y: 0,
   },
   color: 'blue',
-  offset: {
+  attackOffset: {
     x: -50,
     y: 0,
   },
+  imageSrc: './img/samuraiMack/Idle.png',
+  frameCount: 8,
+  scale: 2.5,
+  offset: {
+    x: 215,
+    y: 155
+  }
 });
 
 const keys = {
@@ -114,11 +128,11 @@ function animate() {
   if (keys.a.pressed && player.lastKey === 'a') {
     player.velocity.x = -HORIZONTAL_ACCELERATION;
     // offset attackBox to hit other way
-    player.attackBox.offset.x = -50;
+    player.attackBox.attackOffset.x = -50;
   }
   if (keys.d.pressed && player.lastKey === 'd') {
     player.velocity.x = HORIZONTAL_ACCELERATION;
-    player.attackBox.offset.x = 0;
+    player.attackBox.attackOffset.x = 0;
   }
   if (keys.w.pressed) {
     player.velocity.y = -10;
@@ -128,11 +142,11 @@ function animate() {
   if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
     enemy.velocity.x = -HORIZONTAL_ACCELERATION;
     // offset attackBox to hit other way
-    enemy.attackBox.offset.x = -50;
+    enemy.attackBox.attackOffset.x = -50;
   }
   if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
     enemy.velocity.x = HORIZONTAL_ACCELERATION;
-    enemy.attackBox.offset.x = 0;
+    enemy.attackBox.attackOffset.x = 0;
   }
   if (keys.ArrowUp.pressed) {
     enemy.velocity.y = -10;
