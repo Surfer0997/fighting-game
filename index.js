@@ -12,12 +12,33 @@ const ATTACKBOX_WIDTH = 100;
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d'); // canvas context
 
+const enemyHealthBar = document.querySelector('#enemyHealth');
+const playerHealthBar = document.querySelector('#playerHealth');
+const timer = document.querySelector('#timer');
+const displayText = document.querySelector('#displayText');
+
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
 c.fillRect(0, 0, canvas.width, canvas.height); // canvas API fillRect(x, y, width, height)
 
 class Sprite {
+  constructor({ position }) {
+    this.position = position;
+    this.height = PLAYER_HEIGHT;
+    this.width = PLAYER_WIDTH;
+  }
+
+  draw() {
+
+  }
+
+  update() {
+    this.draw();
+  }
+}
+
+class Fighter {
   constructor({ position, velocity, color = 'red', offset }) {
     this.position = position;
     this.velocity = velocity;
@@ -35,6 +56,7 @@ class Sprite {
       height: ATTACKBOX_HEIGHT,
     };
     this.isAttacking = false;
+    this.health = 100;
   }
 
   draw() {
@@ -42,10 +64,10 @@ class Sprite {
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
 
     // attack box drawn
-    // if (this.isAttacking) {
-    c.fillStyle = 'white';
-    c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height);
-    // }
+    if (this.isAttacking) {
+      c.fillStyle = 'white';
+      c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height);
+    }
   }
 
   update() {
@@ -74,7 +96,7 @@ class Sprite {
   }
 }
 
-const player = new Sprite({
+const player = new Fighter({
   position: {
     x: 0,
     y: 0,
@@ -90,7 +112,7 @@ const player = new Sprite({
   },
 });
 
-const enemy = new Sprite({
+const enemy = new Fighter({
   position: {
     x: 400,
     y: 150,
@@ -136,6 +158,29 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
   );
 }
 
+function decideWhoWonAndDisplay(timeoutId) {
+  displayText.textContent =
+    player.health > enemy.health ? 'Player 1 wins!' : player.health < enemy.health ? 'Player 2 wins!' : 'Tie!';
+  displayText.style.display = 'flex';
+
+  clearTimeout(timeoutId); // stop the timer
+}
+
+let time = 10; // delete
+let timeoutId;
+
+function decreaseTimer() {
+  if (time > 0) {
+    time--;
+    timeoutId = setTimeout(decreaseTimer, 1000);
+    timer.textContent = time;
+  } else {
+    // end game based on time
+    decideWhoWonAndDisplay(timeoutId);
+  }
+}
+decreaseTimer();
+
 function animate() {
   window.requestAnimationFrame(animate); // to run our function on every frame
   c.fillStyle = 'black';
@@ -149,11 +194,11 @@ function animate() {
   if (keys.a.pressed && player.lastKey === 'a') {
     player.velocity.x = -HORIZONTAL_ACCELERATION;
     // offset attackBox to hit other way
-    player.attackBox.offset.x = -50
+    player.attackBox.offset.x = -50;
   }
   if (keys.d.pressed && player.lastKey === 'd') {
     player.velocity.x = HORIZONTAL_ACCELERATION;
-    player.attackBox.offset.x = 0
+    player.attackBox.offset.x = 0;
   }
   if (keys.w.pressed) {
     player.velocity.y = -10;
@@ -164,7 +209,6 @@ function animate() {
     enemy.velocity.x = -HORIZONTAL_ACCELERATION;
     // offset attackBox to hit other way
     enemy.attackBox.offset.x = -50;
-
   }
   if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
     enemy.velocity.x = HORIZONTAL_ACCELERATION;
@@ -177,11 +221,25 @@ function animate() {
   //// detect for collision
   if (rectangularCollision({ rectangle1: player, rectangle2: enemy }) && player.isAttacking) {
     player.isAttacking = false; // to prenent mutiple hits at one time
-    console.log('Enemy was hit');
+    enemy.health -= Math.random() * 20;
+    if (enemy.health <= 0) {
+      enemy.health = 0;
+      enemyHealthBar.style.width = '0%';
+    }
+    enemyHealthBar.style.width = enemy.health + '%'; // Enemy was hit
   }
   if (rectangularCollision({ rectangle1: enemy, rectangle2: player }) && enemy.isAttacking) {
     enemy.isAttacking = false; // to prenent mutiple hits at one time
-    console.log('Player was hit');
+    player.health -= Math.random() * 20;
+    if (player.health <= 0) {
+      player.health = 0;
+      playerHealthBar.style.width = '0%';
+    }
+    playerHealthBar.style.width = player.health + '%'; // Player was hit
+  }
+  //// end game based on health
+  if (enemy.health <= 0 || player.health <= 0) {
+    decideWhoWonAndDisplay(timeoutId);
   }
 }
 animate();
@@ -191,15 +249,15 @@ animate();
 window.addEventListener('keydown', e => {
   switch (e.key) {
     // player
-    case 'd':
+    case 'd' || 'в':
       keys.d.pressed = true;
       player.lastKey = 'd';
       break;
-    case 'a':
+    case 'a' || 'ф':
       keys.a.pressed = true;
       player.lastKey = 'a';
       break;
-    case 'w':
+    case 'w' || 'ц':
       keys.w.pressed = true;
       break;
     case ' ':
@@ -218,8 +276,8 @@ window.addEventListener('keydown', e => {
       keys.ArrowUp.pressed = true;
       break;
     case 'Enter':
-        enemy.attack();
-        break;
+      enemy.attack();
+      break;
   }
 });
 
