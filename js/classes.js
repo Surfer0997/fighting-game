@@ -1,16 +1,45 @@
+const MARGIN_FROM_CANVAS_BOTTOM_TO_GROUND = 96;
+
 class Sprite {
-  constructor({ position }) {
+  constructor({ position, imageSrc, scale = 1, frameCount = 1 }) {
     this.position = position;
-    this.height = PLAYER_HEIGHT;
-    this.width = PLAYER_WIDTH;
+    this.height = 50;
+    this.width = 150;
+    this.image = new Image(); // native API
+    this.image.src = imageSrc;
+    this.scale = scale;
+    this.frameCount = frameCount;
+    this.frameCurrent = 0;
+    this.framesElapsed = 0; // showed frames
+    this.framesHold = 5; // for every X frames change sprite position
   }
 
   draw() {
+    c.drawImage(
+      this.image,
 
+      this.frameCurrent * (this.image.width / this.frameCount), // crop coordinates to animate frames
+      0,
+      this.image.width / this.frameCount,
+      this.image.height,
+
+      this.position.x, // just position
+      this.position.y,
+      (this.image.width / this.frameCount) * this.scale,
+      this.image.height * this.scale
+    );
   }
 
   update() {
     this.draw();
+    this.framesElapsed++;
+    if (this.framesElapsed % this.framesHold === 0) { // hold animation, to be not on every frame
+      if (this.frameCurrent < this.frameCount - 1) {
+        this.frameCurrent++;
+      } else {
+        this.frameCurrent = 0;
+      }
+    }
   }
 }
 
@@ -55,7 +84,7 @@ class Fighter {
     this.position.y += this.velocity.y; // apply the acceleration
     this.position.x += this.velocity.x;
 
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
+    if (this.position.y + this.height + this.velocity.y >= canvas.height - MARGIN_FROM_CANVAS_BOTTOM_TO_GROUND) {
       // stop on the bottom of screen
       this.velocity.y = 0;
     } else {

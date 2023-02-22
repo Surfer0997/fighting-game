@@ -9,6 +9,8 @@ const HORIZONTAL_ACCELERATION = 4.5;
 const ATTACKBOX_HEIGHT = 50;
 const ATTACKBOX_WIDTH = 100;
 
+let GAME_TIME = 10;
+
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d'); // canvas context
 
@@ -21,80 +23,25 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
 c.fillRect(0, 0, canvas.width, canvas.height); // canvas API fillRect(x, y, width, height)
+const background = new Sprite({
+  position: {
+    x:0,
+    y:0
+  },
+  imageSrc: './img/background.png'
+})
 
-class Sprite {
-  constructor({ position }) {
-    this.position = position;
-    this.height = PLAYER_HEIGHT;
-    this.width = PLAYER_WIDTH;
-  }
+const shop = new Sprite({
+  position: {
+    x:650,
+    y:173
+  },
+  imageSrc: './img/shop.png',
+  scale: 2.4,
+  frameCount: 6
+})
 
-  draw() {
 
-  }
-
-  update() {
-    this.draw();
-  }
-}
-
-class Fighter {
-  constructor({ position, velocity, color = 'red', offset }) {
-    this.position = position;
-    this.velocity = velocity;
-    this.color = color;
-    this.height = PLAYER_HEIGHT;
-    this.width = PLAYER_WIDTH;
-    this.lastKey;
-    this.attackBox = {
-      position: {
-        x: this.position.x,
-        y: this.position.y,
-      },
-      offset,
-      width: ATTACKBOX_WIDTH,
-      height: ATTACKBOX_HEIGHT,
-    };
-    this.isAttacking = false;
-    this.health = 100;
-  }
-
-  draw() {
-    c.fillStyle = this.color;
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
-
-    // attack box drawn
-    if (this.isAttacking) {
-      c.fillStyle = 'white';
-      c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height);
-    }
-  }
-
-  update() {
-    this.draw();
-
-    this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
-    this.attackBox.position.y = this.position.y;
-
-    this.position.y += this.velocity.y; // apply the acceleration
-    this.position.x += this.velocity.x;
-
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-      // stop on the bottom of screen
-      this.velocity.y = 0;
-    } else {
-      this.velocity.y += GRAVITY; // apply gravity if not at the bottom of screen
-    }
-  }
-
-  attack() {
-    if (this.isAttacking === true) return;
-    this.isAttacking = true;
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 100);
-  }
-}
 
 const player = new Fighter({
   position: {
@@ -149,42 +96,15 @@ const keys = {
   },
 };
 
-function rectangularCollision({ rectangle1, rectangle2 }) {
-  return (
-    rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x &&
-    rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width &&
-    rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y &&
-    rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
-  );
-}
 
-function decideWhoWonAndDisplay(timeoutId) {
-  displayText.textContent =
-    player.health > enemy.health ? 'Player 1 wins!' : player.health < enemy.health ? 'Player 2 wins!' : 'Tie!';
-  displayText.style.display = 'flex';
-
-  clearTimeout(timeoutId); // stop the timer
-}
-
-let time = 10; // delete
-let timeoutId;
-
-function decreaseTimer() {
-  if (time > 0) {
-    time--;
-    timeoutId = setTimeout(decreaseTimer, 1000);
-    timer.textContent = time;
-  } else {
-    // end game based on time
-    decideWhoWonAndDisplay(timeoutId);
-  }
-}
 decreaseTimer();
 
 function animate() {
   window.requestAnimationFrame(animate); // to run our function on every frame
   c.fillStyle = 'black';
   c.fillRect(0, 0, canvas.width, canvas.height); // clear canvas to aviod painting effect or c.clearRect(0,0, canvas.width, canvas.height)
+  background.update();
+  shop.update();
   player.update();
   enemy.update();
 
