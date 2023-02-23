@@ -8,13 +8,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <title>Fighting Game</title>
-    <link rel="icon" href="./img/sword_katana.ico">
+    <link rel="icon" href="./img/sword_katana.ico" />
     <script defer src="js/classes.js"></script>
     <script defer src="js/utils.js"></script>
     <script defer src="js/controls.js"></script>
     <script defer src="js/playersConfig.js"></script>
     <script defer src="index.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" integrity="sha512-f8mwTB+Bs8a5c46DEm7HQLcJuHMBaH/UFlcgyetMqqkvTcYg4g5VXsYR71b3qC82lZytjNYvBj2pf0VekA9/FQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"
+      integrity="sha512-f8mwTB+Bs8a5c46DEm7HQLcJuHMBaH/UFlcgyetMqqkvTcYg4g5VXsYR71b3qC82lZytjNYvBj2pf0VekA9/FQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
     <style>
       * {
         box-sizing: border-box;
@@ -24,68 +33,99 @@
   </head>
   <body>
     <body>
-      <div style="position: relative; display: inline-block" class="continer">
+      <div style="display: flex; justify-content: center;">
         <div
-          class="health_and_timer"
-          style="position: absolute; display: flex; width: 100%; align-items: center; padding: 1rem"
-        >
-          <!-- player health -->
-          <div
-            style="
-              position: relative;
-              height: 30px;
-              width: 100%;
-              display: flex;
-              justify-content: flex-end;
-              border: solid white 4px;
-              border-right: 0px;
-            "
-          >
-            <div style="background-color: #dc2626; height: 100%; width: 100%"></div>
-            <div
-              id="playerHealth"
-              style="position: absolute; background-color: #818cf8; top: 0; right: 0; bottom: 0; width: 100%"
-            ></div>
-          </div>
-          <!-- timer -->
-          <div
-            id="timer"
-            style="
-              background-color: #334155;
-              height: 50px;
-              width: 50px;
-              flex-shrink: 0;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: #fff;
-              border: solid white 4px;
-            "
-          >
-            10
-          </div>
-          <!-- enemy health -->
-          <div style="position: relative; height: 30px; width: 100%; border: solid white 4px; border-left: 0px">
-            <div style="background-color: #dc2626; height: 100%"></div>
-            <div id="enemyHealth" style="position: absolute; background-color: #818cf8; inset: 0"></div>
-          </div>
-        </div>
-
-        <div
-          id="displayText"
           style="
-            position: absolute;
-            color: aliceblue;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            inset: 0;
-            font-size: 30px;
+            position: relative;
+            display: inline-block;
+            border: solid black 50px;
+            flex-shrink: 0;
+            border-image: url('/img/game-border.png') 33% round;
           "
+          class="game-continer"
         >
-          Tie
+          <div
+            class="health_and_timer"
+            style="position: absolute; display: flex; width: 100%; align-items: center; padding: 1rem"
+          >
+            <!-- player health -->
+            <div
+              style="
+                position: relative;
+                height: 30px;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                border: solid white 4px;
+                border-right: 0px;
+              "
+            >
+              <div style="background-color: #dc2626; height: 100%; width: 100%"></div>
+              <div
+                id="playerHealth"
+                style="position: absolute; background-color: #818cf8; top: 0; right: 0; bottom: 0; width: 100%"
+              ></div>
+            </div>
+            <!-- timer -->
+            <div
+              id="timer"
+              style="
+                background-color: #334155;
+                height: 50px;
+                width: 50px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                border: solid white 4px;
+              "
+            >
+              10
+            </div>
+            <!-- enemy health -->
+            <div style="position: relative; height: 30px; width: 100%; border: solid white 4px; border-left: 0px">
+              <div style="background-color: #dc2626; height: 100%"></div>
+              <div id="enemyHealth" style="position: absolute; background-color: #818cf8; inset: 0"></div>
+            </div>
+          </div>
+
+          <div
+            id="displayText"
+            style="
+              position: absolute;
+              color: aliceblue;
+              display: none;
+              justify-content: center;
+              align-items: center;
+              inset: 0;
+              font-size: 30px;
+            "
+          >
+            Tie
+          </div>
+          <canvas></canvas>
         </div>
-        <canvas></canvas>
+        
+      </div>
+
+      <!-- Game controls -->
+      <div style="width: 1024px; display: flex; justify-content: space-around; margin: 0 auto;">
+        <div>
+          <p>W - Jump</p>
+          <p>A - Move left</p>
+          <p>D - Move right</p>
+          <p>Space - Attack</p>
+        </div>
+        <div>
+          <p>R - Restart game</p>
+        </div>
+        <div>
+          <p>ArrowUp - Jump</p>
+          <p>ArrowLeft - Move left</p>
+          <p>ArrowRight - Move right</p>
+          <p>Enter - Attack</p>
+        </div>
       </div>
     </body>
   </body>

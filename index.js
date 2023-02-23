@@ -37,10 +37,10 @@ const shop = new Sprite({
   frameCount: 6,
 });
 
-const player = new Fighter(PLAYER_CONFIG);
+let player = new Fighter(PLAYER_CONFIG);
 player.width = PLAYER_WIDTH + 10;
 
-const enemy = new Fighter(ENEMY_CONFIG);
+let enemy = new Fighter(ENEMY_CONFIG);
 
 const keys = {
   d: {
@@ -190,3 +190,23 @@ function animate() {
   }
 }
 animate();
+
+
+window.addEventListener('keyup', (e)=>{
+  if (e.key === 'r' || e.key === 'R') {
+    player = new Fighter(PLAYER_CONFIG);
+    enemy = new Fighter(ENEMY_CONFIG);
+    GAME_TIME = 60;
+    gsap.to('#enemyHealth', {
+      width: '100%',
+    });
+    gsap.to('#playerHealth', {
+      width: '100%',
+    });
+    player.position.x = 150;
+    player.position.y = 0;
+    enemy.position.x = 850;
+    enemy.position.y = 0;
+    displayText.style.display = 'none';
+  }
+})

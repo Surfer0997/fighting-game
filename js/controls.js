@@ -16,6 +16,7 @@ window.addEventListener('keydown', e => {
           keys.w.pressed = true;
           break;
         case ' ':
+          e.preventDefault();
           player.attack();
           break;
       }
@@ -65,3 +66,5 @@ window.addEventListener('keydown', e => {
         break;
     }
   });
+
+ 
