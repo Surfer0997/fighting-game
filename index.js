@@ -143,7 +143,7 @@ function animate() {
   ) {
     const damage = Math.random() * 25 + 1; // slower attack -> bigger damage
     enemy.takeHit(damage);
-    player.isAttacking = false; // to prenent mutiple hits at one time
+    player.isAttacking = false; // to prevent mutiple hits at one time
     if (enemy.health <= 0) {
       enemy.health = 0;
       gsap.to('#enemyHealth', {
@@ -151,9 +151,9 @@ function animate() {
       });
     }
     // Enemy was hit
-    gsap.to('#enemyHealth', {
-      width: enemy.health + '%',
-    });
+    // gsap.to('#enemyHealth', {
+    //   width: enemy.health + '%',
+    // });
   }
 
   // if player misses
@@ -176,9 +176,9 @@ function animate() {
       });
     }
     // Player was hit
-    gsap.to('#playerHealth', {
-      width: player.health + '%',
-    });
+    // gsap.to('#playerHealth', {
+    //   width: player.health + '%',
+    // });
   }
   // if enemy misses & player gets hit
   if (enemy.isAttacking && enemy.frameCurrent === 2) {

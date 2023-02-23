@@ -63,6 +63,7 @@ class Fighter extends Sprite {
     offset = { x: 0, y: 0 },
     sprites,
     lastDirection = 'Left',
+    htmlHealthBar
   }) {
     super({
       position,
@@ -71,6 +72,7 @@ class Fighter extends Sprite {
       frameCount,
       offset,
     });
+    this.htmlHealthBar = htmlHealthBar;
     this.velocity = velocity;
     this.color = color;
     this.height = PLAYER_HEIGHT;
@@ -278,7 +280,13 @@ class Fighter extends Sprite {
 
   takeHit(damage) {
     this.health -= damage;
+    console.log(this.health);
+    gsap.to(this.htmlHealthBar, {
+      width: this.health + '%',
+    });
     if (this.health <= 0) {
+      this.frameCurrent = 0;
+     
       this.switchSprite('death' + this.lastDirection);
     } else this.switchSprite('takeHit' + this.lastDirection);
   }

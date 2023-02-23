@@ -26,6 +26,7 @@ const PLAYER_CONFIG = {
     x: 215,
     y: 155,
   },
+  htmlHealthBar: "#playerHealth",
   lastDirection: 'Right',
   sprites: {
     idleLeft: {
@@ -113,6 +114,7 @@ const ENEMY_CONFIG = {
     attackBoxHeight: ATTACKBOX_HEIGHT,
     attackBoxWidth: 220,
   },
+  htmlHealthBar: "#enemyHealth",
   imageSrc: './img/kenji/IdleLeft.png',
   frameCount: 4,
   scale: 2.5,

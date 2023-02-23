@@ -18,6 +18,7 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
   
   let timeoutId;
   function decreaseTimer() {
+    if (timeoutId) clearTimeout(timeoutId);
     if (GAME_TIME > 0) {
       GAME_TIME--;
       timeoutId = setTimeout(decreaseTimer, 1000);
