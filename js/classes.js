@@ -13,6 +13,8 @@ class Sprite {
     this.framesElapsed = 0; // showed frames
     this.framesHold = 5; // for every X frames change sprite position
     this.offset = offset;
+
+    
   }
 
   draw() {
@@ -97,8 +99,7 @@ class Fighter extends Sprite {
       // loop through all our prites to create instances of javascript Image + set source for them
       sprites[sprite].image = new Image();
       sprites[sprite].image.src = sprites[sprite].imageSrc;
-    }
-    console.log(sprites);
+    };
   }
 
   update() {
@@ -115,6 +116,20 @@ class Fighter extends Sprite {
     this.position.y += this.velocity.y; // apply the acceleration
     this.position.x += this.velocity.x;
 
+    /////////// MOVEMENT RESTRICTIONS
+    // if (this.position.x <= 0 || this.position.x >= CANVAS_WIDTH) { // TELEPORT EFFECT
+    //   this.position.x = 0;
+    // }
+    if (this.position.x <= 0) {
+      this.position.x = 0;
+    }
+    if (this.position.x >= CANVAS_WIDTH - PLAYER_WIDTH - 10) {
+      this.position.x = CANVAS_WIDTH - PLAYER_WIDTH - 10;
+    }
+    if (this.position.y <= -200) { // some space behind the scene for fun pvp
+      this.velocity.y = 0;
+      this.position.y = -200;
+    }
     if (this.position.y + this.height + this.velocity.y >= canvas.height - MARGIN_FROM_CANVAS_BOTTOM_TO_GROUND) {
       // stop on the bottom of screen
       this.velocity.y = 0;
@@ -266,5 +281,9 @@ class Fighter extends Sprite {
     if (this.health <= 0) {
       this.switchSprite('death' + this.lastDirection);
     } else this.switchSprite('takeHit' + this.lastDirection);
+  }
+  jump() {
+    if (!this.dead)
+        this.velocity.y = -10; 
   }
 }
