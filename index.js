@@ -208,5 +208,6 @@ window.addEventListener('keyup', (e)=>{
     enemy.position.x = 850;
     enemy.position.y = 0;
     displayText.style.display = 'none';
+    decreaseTimer();
   }
 })
