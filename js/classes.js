@@ -280,7 +280,6 @@ class Fighter extends Sprite {
 
   takeHit(damage) {
     this.health -= damage;
-    console.log(this.health);
     gsap.to(this.htmlHealthBar, {
       width: this.health + '%',
     });
