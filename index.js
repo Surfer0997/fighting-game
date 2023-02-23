@@ -57,40 +57,77 @@ const player = new Fighter({
     attackBoxHeight: ATTACKBOX_HEIGHT,
     attackBoxWidth: 250,
   },
-  imageSrc: './img/samuraiMack/Idle.png',
+  imageSrc: './img/samuraiMack/IdleRight.png',
   frameCount: 8,
   scale: 2.5,
   offset: {
     x: 215,
     y: 155,
   },
+  lastDirection: 'Right',
   sprites: {
-    idle: {
-      imageSrc: './img/samuraiMack/Idle.png',
+    idleLeft: {
+      imageSrc: './img/samuraiMack/IdleLeft.png',
       frameCount: 8,
     },
-    run: {
+    idleRight: {
+      imageSrc: './img/samuraiMack/IdleRight.png',
+      frameCount: 8,
+    },
+    runRight: {
       imageSrc: './img/samuraiMack/Run.png',
       frameCount: 8,
     },
-    jump: {
-      imageSrc: './img/samuraiMack/Jump.png',
+    runLeft: {
+      imageSrc: './img/samuraiMack/RunLeft.png',
+      frameCount: 8,
+    },
+    jumpLeft: {
+      imageSrc: './img/samuraiMack/JumpLeft.png',
       frameCount: 2,
     },
-    fall: {
-      imageSrc: './img/samuraiMack/Fall.png',
+    jumpRight: {
+      imageSrc: './img/samuraiMack/JumpRight.png',
       frameCount: 2,
     },
-    attack1: {
-      imageSrc: './img/samuraiMack/Attack1.png',
+    fallLeft: {
+      imageSrc: './img/samuraiMack/FallLeft.png',
+      frameCount: 2,
+    },
+    fallRight: {
+      imageSrc: './img/samuraiMack/FallRight.png',
+      frameCount: 2,
+    },
+    attack1Left: {
+      imageSrc: './img/samuraiMack/Attack1Left.png',
       frameCount: 6,
     },
-    takeHit: {
-      imageSrc: './img/samuraiMack/Take hit - white silhouette.png',
+    attack2Left: {
+      imageSrc: './img/samuraiMack/Attack2Left.png',
+      frameCount: 6,
+    },
+    attack1Right: {
+      imageSrc: './img/samuraiMack/Attack1Right.png',
+      frameCount: 6,
+    },
+    attack2Right: {
+      imageSrc: './img/samuraiMack/Attack2Right.png',
+      frameCount: 6,
+    },
+    takeHitLeft: {
+      imageSrc: './img/samuraiMack/Take hit - white silhouetteLeft.png',
       frameCount: 4,
     },
-    death: {
-      imageSrc: './img/samuraiMack/Death.png',
+    takeHitRight: {
+      imageSrc: './img/samuraiMack/Take hit - white silhouetteRight.png',
+      frameCount: 4,
+    },
+    deathLeft: {
+      imageSrc: './img/samuraiMack/DeathLeft.png',
+      frameCount: 6,
+    },
+    deathRight: {
+      imageSrc: './img/samuraiMack/DeathRight.png',
       frameCount: 6,
     },
   },
@@ -115,40 +152,77 @@ const enemy = new Fighter({
     attackBoxHeight: ATTACKBOX_HEIGHT,
     attackBoxWidth: 220,
   },
-  imageSrc: './img/kenji/Idle.png',
+  imageSrc: './img/kenji/IdleLeft.png',
   frameCount: 4,
   scale: 2.5,
   offset: {
     x: 215,
     y: 169,
   },
+  lastDirection: 'Left',
   sprites: {
-    idle: {
-      imageSrc: './img/kenji/Idle.png',
+    idleLeft: {
+      imageSrc: './img/kenji/IdleLeft.png',
       frameCount: 4,
     },
-    run: {
+    idleRight: {
+      imageSrc: './img/kenji/IdleRight.png',
+      frameCount: 4,
+    },
+    runRight: {
       imageSrc: './img/kenji/Run.png',
       frameCount: 8,
     },
-    jump: {
-      imageSrc: './img/kenji/Jump.png',
+    runLeft: {
+      imageSrc: './img/kenji/RunLeft.png',
+      frameCount: 8,
+    },
+    jumpLeft: {
+      imageSrc: './img/kenji/JumpLeft.png',
       frameCount: 2,
     },
-    fall: {
-      imageSrc: './img/kenji/Fall.png',
+    jumpRight: {
+      imageSrc: './img/kenji/JumpRight.png',
       frameCount: 2,
     },
-    attack1: {
-      imageSrc: './img/kenji/Attack1.png',
+    fallLeft: {
+      imageSrc: './img/kenji/FallLeft.png',
+      frameCount: 2,
+    },
+    fallRight: {
+      imageSrc: './img/kenji/FallRight.png',
+      frameCount: 2,
+    },
+    attack1Left: {
+      imageSrc: './img/kenji/Attack1Left.png',
       frameCount: 4,
     },
-    takeHit: {
-      imageSrc: './img/kenji/Take hit.png',
+    attack2Left: {
+      imageSrc: './img/kenji/Attack2Left.png',
+      frameCount: 4,
+    },
+    attack1Right: {
+      imageSrc: './img/kenji/Attack1Right.png',
+      frameCount: 4,
+    },
+    attack2Right: {
+      imageSrc: './img/kenji/Attack2Right.png',
+      frameCount: 4,
+    },
+    takeHitLeft: {
+      imageSrc: './img/kenji/Take hitLeft.png',
       frameCount: 3,
     },
-    death: {
-      imageSrc: './img/kenji/Death.png',
+    takeHitRight: {
+      imageSrc: './img/kenji/Take hitRight.png',
+      frameCount: 3,
+    },
+    deathLeft: {
+      imageSrc: './img/kenji/DeathLeft.png',
+      frameCount: 7,
+    },
+    deathRight: {
+      imageSrc: './img/kenji/DeathRight.png',
       frameCount: 7,
     },
   },
@@ -196,14 +270,16 @@ function animate() {
 
   if (keys.a.pressed && player.lastKey === 'a') {
     player.velocity.x = -HORIZONTAL_ACCELERATION;
-    player.switchSprite('run');
+    player.lastDirection = 'Left';
+    player.switchSprite('runLeft');
     // offset attackBox to hit other way
-    player.attackBox.attackOffset.x = -player.attackBox.width + 50;
+    if (!player.isAttacking) player.attackBox.attackOffset.x = -player.attackBox.width + 50;
   } else if (keys.d.pressed && player.lastKey === 'd') {
     player.velocity.x = HORIZONTAL_ACCELERATION;
-    player.switchSprite('run');
-    player.attackBox.attackOffset.x = 0;
-  } else player.switchSprite('idle'); // default sprite
+    player.lastDirection = 'Right';
+    player.switchSprite('runRight');
+    if (!player.isAttacking) player.attackBox.attackOffset.x = 0;
+  } else player.switchSprite(`idle${player.lastDirection}`); // default sprite
 
   if (keys.w.pressed) {
     player.velocity.y = -10;
@@ -211,24 +287,26 @@ function animate() {
 
   if (player.velocity.y < 0) {
     // if player going up
-    player.switchSprite('jump');
+    player.switchSprite(`jump${player.lastDirection}`);
   } else if (player.velocity.y > 0) {
     // if player going down
-    player.switchSprite('fall');
+    player.switchSprite(`fall${player.lastDirection}`);
   }
 
   ///// enemy
   if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
     enemy.velocity.x = -HORIZONTAL_ACCELERATION;
-    enemy.switchSprite('run');
+    enemy.lastDirection = 'Left';
+    enemy.switchSprite('runRight');
     // offset attackBox to hit other way
-    enemy.attackBox.attackOffset.x = -enemy.attackBox.width + 50;
+    if (!enemy.isAttacking) enemy.attackBox.attackOffset.x = -enemy.attackBox.width + 50;
   } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
     enemy.velocity.x = HORIZONTAL_ACCELERATION;
-    enemy.switchSprite('run');
-    enemy.attackBox.attackOffset.x = 0;
+    enemy.lastDirection = 'Right';
+    enemy.switchSprite('runLeft');
+    if (!enemy.isAttacking) enemy.attackBox.attackOffset.x = 0;
   } else {
-    enemy.switchSprite('idle');
+    enemy.switchSprite(`idle${enemy.lastDirection}`);
   }
 
   if (keys.ArrowUp.pressed) {
@@ -237,10 +315,10 @@ function animate() {
 
   if (enemy.velocity.y < 0) {
     // if enemy going up
-    enemy.switchSprite('jump');
+    enemy.switchSprite(`jump${enemy.lastDirection}`);
   } else if (enemy.velocity.y > 0) {
     // if enemy going down
-    enemy.switchSprite('fall');
+    enemy.switchSprite(`fall${enemy.lastDirection}`);
   }
 
   //// detect for collision & enemy gets hit
@@ -255,13 +333,13 @@ function animate() {
     if (enemy.health <= 0) {
       enemy.health = 0;
       gsap.to('#enemyHealth', {
-        width:  '0%'
-      })
+        width: '0%',
+      });
     }
-// Enemy was hit
+    // Enemy was hit
     gsap.to('#enemyHealth', {
-      width:  enemy.health + '%'
-    })
+      width: enemy.health + '%',
+    });
   }
 
   // if player misses
@@ -280,13 +358,13 @@ function animate() {
     if (player.health <= 0) {
       player.health = 0;
       gsap.to('#playerHealth', {
-        width:  '0%'
-      })
+        width: '0%',
+      });
     }
- // Player was hit
+    // Player was hit
     gsap.to('#playerHealth', {
-      width:  player.health + '%'
-    })
+      width: player.health + '%',
+    });
   }
   // if enemy misses & player gets hit
   if (enemy.isAttacking && enemy.frameCurrent === 2) {

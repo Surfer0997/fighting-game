@@ -60,6 +60,7 @@ class Fighter extends Sprite {
     frameCount = 1,
     offset = { x: 0, y: 0 },
     sprites,
+    lastDirection = 'Left',
   }) {
     super({
       position,
@@ -73,6 +74,7 @@ class Fighter extends Sprite {
     this.height = PLAYER_HEIGHT;
     this.width = PLAYER_WIDTH;
     this.lastKey;
+    this.lastDirection = lastDirection;
     this.attackBox = {
       position: {
         x: this.position.x,
@@ -96,6 +98,7 @@ class Fighter extends Sprite {
       sprites[sprite].image = new Image();
       sprites[sprite].image.src = sprites[sprite].imageSrc;
     }
+    console.log(sprites);
   }
 
   update() {
@@ -124,18 +127,40 @@ class Fighter extends Sprite {
   attack() {
     if (this.isAttacking === true) return;
     this.isAttacking = true;
-    this.switchSprite('attack1');
+    if (Math.random() > 0.75) {
+      this.switchSprite(`attack2${this.lastDirection}`);
+    } else this.switchSprite(`attack1${this.lastDirection}`);
+  }
+
+  blockAnim() {
+    // overriding all other animations with the attack anim
+    if (this.image === this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.frameCount - 1)
+      return true; // to disable sprite change while attacking
+    if (this.image === this.sprites.attack2Left.image && this.frameCurrent < this.sprites.attack2Left.frameCount - 1)
+      return true;
+    if (this.image === this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.frameCount - 1)
+      return true; // to disable sprite change while attacking
+    if (this.image === this.sprites.attack2Right.image && this.frameCurrent < this.sprites.attack2Right.frameCount - 1)
+      return true;
+    // overriding all other animations with the take hit anim
+    if (this.image === this.sprites.takeHitLeft.image && this.frameCurrent < this.sprites.takeHitLeft.frameCount - 1)
+      return true;
+    if (this.image === this.sprites.takeHitRight.image && this.frameCurrent < this.sprites.takeHitRight.frameCount - 1)
+      return true;
   }
 
   switchSprite(sprite) {
-    // overriding all other animations with the attack anim
-    if (this.image === this.sprites.attack1.image && this.frameCurrent < this.sprites.attack1.frameCount - 1) return; // to disable sprite change while attacking
-    // overriding all other animations with the take hit anim
-    if (this.image === this.sprites.takeHit.image && this.frameCurrent < this.sprites.takeHit.frameCount - 1) return;
+    if (this.blockAnim()) return;
 
     // overriding all other animations with the death anim
-    if (this.image === this.sprites.death.image) {
-      if (this.frameCurrent === this.sprites.death.frameCount - 1) {
+    if (this.image === this.sprites.deathLeft.image) {
+      if (this.frameCurrent === this.sprites.deathLeft.frameCount - 1) {
+        this.dead = true;
+      }
+      return;
+    }
+    if (this.image === this.sprites.deathRight.image) {
+      if (this.frameCurrent === this.sprites.deathRight.frameCount - 1) {
         this.dead = true;
       }
       return;
@@ -144,44 +169,93 @@ class Fighter extends Sprite {
     // this.frameCurrent = 0; // to avoid flashing, when trying to get from 8 frame anim to 2 frame anim
     // for example going from 4th frame to 2 frame anim causes flashing, cause there is no 5th sprite
     switch (sprite) {
-      case 'idle':
-        if (this.image !== this.sprites.idle.image) {
-          this.image = this.sprites.idle.image;
-          this.frameCount = this.sprites.idle.frameCount;
+      case 'idleLeft':
+        if (this.image !== this.sprites.idleLeft.image) {
+          this.image = this.sprites.idleLeft.image;
+          this.frameCount = this.sprites.idleLeft.frameCount;
           this.frameCurrent = 0;
         }
         break;
-      case 'run':
-        if (this.image !== this.sprites.run.image) {
-          this.image = this.sprites.run.image;
-          this.frameCount = this.sprites.run.frameCount;
+      case 'idleRight':
+        if (this.image !== this.sprites.idleRight.image) {
+          this.image = this.sprites.idleRight.image;
+          this.frameCount = this.sprites.idleRight.frameCount;
           this.frameCurrent = 0;
         }
         break;
-      case 'jump':
-        if (this.image !== this.sprites.jump.image) this.image = this.sprites.jump.image;
-        this.frameCount = this.sprites.jump.frameCount;
+      case 'runRight':
+        if (this.image !== this.sprites.runRight.image) {
+          this.image = this.sprites.runRight.image;
+          this.frameCount = this.sprites.runRight.frameCount;
+          this.frameCurrent = 0;
+        }
+        break;
+      case 'runLeft':
+        if (this.image !== this.sprites.runLeft.image) {
+          this.image = this.sprites.runLeft.image;
+          this.frameCount = this.sprites.runLeft.frameCount;
+          this.frameCurrent = 0;
+        }
+        break;
+      case 'jumpLeft':
+        if (this.image !== this.sprites.jumpLeft.image) this.image = this.sprites.jumpLeft.image;
+        this.frameCount = this.sprites.jumpLeft.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'jumpRight':
+        if (this.image !== this.sprites.jumpRight.image) this.image = this.sprites.jumpRight.image;
+        this.frameCount = this.sprites.jumpRight.frameCount;
         this.frameCurrent = 0;
         break;
 
-      case 'fall':
-        if (this.image !== this.sprites.fall.image) this.image = this.sprites.fall.image;
-        this.frameCount = this.sprites.fall.frameCount;
+      case 'fallLeft':
+        if (this.image !== this.sprites.fallLeft.image) this.image = this.sprites.fallLeft.image;
+        this.frameCount = this.sprites.fallLeft.frameCount;
         this.frameCurrent = 0;
         break;
-      case 'attack1':
-        if (this.image !== this.sprites.attack1.image) this.image = this.sprites.attack1.image;
-        this.frameCount = this.sprites.attack1.frameCount;
+      case 'fallRight':
+        if (this.image !== this.sprites.fallRight.image) this.image = this.sprites.fallRight.image;
+        this.frameCount = this.sprites.fallRight.frameCount;
         this.frameCurrent = 0;
         break;
-      case 'takeHit':
-        if (this.image !== this.sprites.takeHit.image) this.image = this.sprites.takeHit.image;
-        this.frameCount = this.sprites.takeHit.frameCount;
+      case 'attack1Left':
+        if (this.image !== this.sprites.attack1Left.image) this.image = this.sprites.attack1Left.image;
+        this.frameCount = this.sprites.attack1Left.frameCount;
         this.frameCurrent = 0;
         break;
-      case 'death':
-        if (this.image !== this.sprites.death.image) this.image = this.sprites.death.image;
-        this.frameCount = this.sprites.death.frameCount;
+      case 'attack2Left':
+        if (this.image !== this.sprites.attack2Left.image) this.image = this.sprites.attack2Left.image;
+        this.frameCount = this.sprites.attack2Left.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'attack1Right':
+        if (this.image !== this.sprites.attack1Right.image) this.image = this.sprites.attack1Right.image;
+        this.frameCount = this.sprites.attack1Right.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'attack2Right':
+        if (this.image !== this.sprites.attack2Right.image) this.image = this.sprites.attack2Right.image;
+        this.frameCount = this.sprites.attack2Right.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'takeHitLeft':
+        if (this.image !== this.sprites.takeHitLeft.image) this.image = this.sprites.takeHitLeft.image;
+        this.frameCount = this.sprites.takeHitLeft.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'takeHitRight':
+        if (this.image !== this.sprites.takeHitRight.image) this.image = this.sprites.takeHitRight.image;
+        this.frameCount = this.sprites.takeHitRight.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'deathLeft':
+        if (this.image !== this.sprites.deathLeft.image) this.image = this.sprites.deathLeft.image;
+        this.frameCount = this.sprites.deathLeft.frameCount;
+        this.frameCurrent = 0;
+        break;
+      case 'deathRight':
+        if (this.image !== this.sprites.deathRight.image) this.image = this.sprites.deathRight.image;
+        this.frameCount = this.sprites.deathRight.frameCount;
         this.frameCurrent = 0;
         break;
     }
@@ -189,9 +263,8 @@ class Fighter extends Sprite {
 
   takeHit(damage) {
     this.health -= damage;
-
     if (this.health <= 0) {
-      this.switchSprite('death');
-    } else this.switchSprite('takeHit');
+      this.switchSprite('death' + this.lastDirection);
+    } else this.switchSprite('takeHit' + this.lastDirection);
   }
 }
