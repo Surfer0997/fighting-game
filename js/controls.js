@@ -33,7 +33,11 @@ window.addEventListener('keydown', e => {
         enemy.lastKey = 'ArrowLeft';
         break;
       case 'ArrowUp':
+        e.preventDefault();
         keys.ArrowUp.pressed = true;
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
         break;
       case 'Enter':
         enemy.attack();
@@ -62,11 +66,7 @@ window.addEventListener('keyup', e => {
       keys.ArrowLeft.pressed = false;
       break;
     case 'ArrowUp':
-      e.preventDefault();
       keys.ArrowUp.pressed = false;
-      break;
-    case 'ArrowDown':
-      e.preventDefault();
       break;
   }
 });
