@@ -13,8 +13,6 @@ class Sprite {
     this.framesElapsed = 0; // showed frames
     this.framesHold = 5; // for every X frames change sprite position
     this.offset = offset;
-
-    
   }
 
   draw() {
@@ -63,7 +61,7 @@ class Fighter extends Sprite {
     offset = { x: 0, y: 0 },
     sprites,
     lastDirection = 'Left',
-    htmlHealthBar
+    htmlHealthBar,
   }) {
     super({
       position,
@@ -101,7 +99,7 @@ class Fighter extends Sprite {
       // loop through all our prites to create instances of javascript Image + set source for them
       sprites[sprite].image = new Image();
       sprites[sprite].image.src = sprites[sprite].imageSrc;
-    };
+    }
   }
 
   update() {
@@ -130,7 +128,8 @@ class Fighter extends Sprite {
     if (this.position.x >= CANVAS_WIDTH - PLAYER_WIDTH - 10) {
       this.position.x = CANVAS_WIDTH - PLAYER_WIDTH - 10;
     }
-    if (this.position.y <= -200) { // some space behind the scene for fun pvp
+    if (this.position.y <= -200) {
+      // some space behind the scene for fun pvp
       this.velocity.y = 0;
       this.position.y = -200;
     }
@@ -144,7 +143,7 @@ class Fighter extends Sprite {
   }
 
   attack() {
-    if (this.image === this.sprites.deathLeft || this.image === this.sprites.deathRight) return;
+    if (this.health <= 0 ) return;
     if (this.isAttacking === true) return;
     this.isAttacking = true;
     if (Math.random() > 0.75) {
@@ -282,19 +281,20 @@ class Fighter extends Sprite {
   }
 
   takeHit(damage) {
-    if (this.dead || this.image === this.sprites.deathRight.image || this.image === this.sprites.deathLeft.image) return;
+    if (this.dead || this.image === this.sprites.deathRight.image || this.image === this.sprites.deathLeft.image)
+      return;
     this.health -= damage;
     gsap.to(this.htmlHealthBar, {
       width: this.health + '%',
     });
     if (this.health <= 0) {
       this.frameCurrent = 0;
-     
+      this.isAttacking = false;
+
       this.switchSprite('death' + this.lastDirection);
     } else this.switchSprite('takeHit' + this.lastDirection);
   }
   jump() {
-    if (!this.dead)
-        this.velocity.y = -10; 
+    if (!this.dead) this.velocity.y = -10;
   }
 }
