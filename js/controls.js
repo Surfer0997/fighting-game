@@ -15,6 +15,39 @@ window.addEventListener('keydown', e => {
       case 'w':
         keys.w.pressed = true;
         break;
+      case 'в':
+        keys.d.pressed = true;
+        player.lastKey = 'd';
+        break;
+      case 'ф':
+        keys.a.pressed = true;
+        player.lastKey = 'a';
+        break;
+      case 'ц':
+        keys.w.pressed = true;
+        break;
+      case 'D':
+        keys.d.pressed = true;
+        player.lastKey = 'd';
+        break;
+      case 'A':
+        keys.a.pressed = true;
+        player.lastKey = 'a';
+        break;
+      case 'W':
+        keys.w.pressed = true;
+        break;
+      case 'В':
+        keys.d.pressed = true;
+        player.lastKey = 'd';
+        break;
+      case 'Ф':
+        keys.a.pressed = true;
+        player.lastKey = 'a';
+        break;
+      case 'Ц':
+        keys.w.pressed = true;
+        break;
       case ' ':
         e.preventDefault();
         player.attack();
@@ -56,6 +89,33 @@ window.addEventListener('keyup', e => {
       keys.a.pressed = false;
       break;
     case 'w':
+      keys.w.pressed = false;
+      break;
+    case 'в':
+      keys.d.pressed = false;
+      break;
+    case 'ф':
+      keys.a.pressed = false;
+      break;
+    case 'ц':
+      keys.w.pressed = false;
+      break;
+    case 'D':
+      keys.d.pressed = false;
+      break;
+    case 'A':
+      keys.a.pressed = false;
+      break;
+    case 'W':
+      keys.w.pressed = false;
+      break;
+    case 'В':
+      keys.d.pressed = false;
+      break;
+    case 'Ф':
+      keys.a.pressed = false;
+      break;
+    case 'Ц':
       keys.w.pressed = false;
       break;
     // enemy

@@ -193,7 +193,7 @@ animate();
 
 
 window.addEventListener('keyup', (e)=>{
-  if (e.key === 'r' || e.key === 'R') {
+  if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
     player = new Fighter(PLAYER_CONFIG);
     enemy = new Fighter(ENEMY_CONFIG);
     GAME_TIME = 60;
